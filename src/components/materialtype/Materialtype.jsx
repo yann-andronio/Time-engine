@@ -8,7 +8,7 @@ export default function Materialtype() {
 
     return (
         <Fragment>
-            <form className=' flex gap-3 '>
+            <form className=' flex gap-3  w-96'>
                 <fieldset className='p-6  border border-gray-400 rounded-lg shadow-md  mx-auto'>
                     <legend>Type de matériel</legend>
                     <div className={`${s.formMaterial}`}>
