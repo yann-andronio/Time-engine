@@ -1,0 +1,8 @@
+.cardBox{
+    transition: 0.3s;
+}
+.cardBox:hover{
+    transform: scale(1.02);
+    transition: 0.3s;
+}
+

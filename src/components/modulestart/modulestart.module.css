@@ -1,0 +1,123 @@
+
+
+/* 
+
+
+        {
+             timeLimit && (<div className="grid grid-cols-3 gap-4" > {
+                     [15, 30, 45, 60, 75, 90].map((t)=> (<button key= {
+                                 t
+                             }
+    
+                             className= {
+                                 `p-2 border rounded $ {
+                                     time===t ? 'bg-blue-500 text-white' : 'bg-gray-200'
+                                 }
+    
+                                 `
+                             }
+    
+                             onClick= {
+                                 ()=> setTime(t)
+                             }
+    
+                             > {
+                                 t
+                             }
+    
+                             minutes </button>))
+                 }
+    
+                 <div className="col-span-3 flex space-x-2 items-center" > <span>H/m :</span> <input type="number"
+                 placeholder="H"
+                 className="border p-2 rounded w-16"
+                 /> <input type="number"
+                 placeholder="m"
+                 className="border p-2 rounded w-16"
+                 /> </div> </div>)
+         }
+    
+         </div> {
+             /* Temps ou Argents 
+         }
+    
+         <div className="mb-4 flex space-x-4 items-center"><label className="flex items-center space-x-2"><input type="radio"
+         name="timeOrMoney"
+         value="Temps"
+    
+         onChange= {
+             (e)=>setMoney('')
+         }
+    
+         className="form-radio"
+         /><span>Temps</span></label><label className="flex items-center space-x-2"><input type="radio"
+         name="timeOrMoney"
+         value="Argents"
+    
+         onChange= {
+             (e)=>setMoney('200')
+         }
+    
+         className="form-radio"
+    
+         /><span>Argents</span><input type="text"
+         value= {
+             money
+         }
+    
+         disabled= {
+             !money
+         }
+    
+         onChange= {
+             (e)=>setMoney(e.target.value)
+         }
+    
+         className="border p-2 rounded w-24"
+    
+         /></label></div> {
+             /* Payment 
+         }
+    
+         <div className="mb-4"><h2 className="font-bold mb-2">Payment</h2><div className="flex flex-col space-y-2"> {
+    
+             ['Non payée',
+             'Payée'].map((status)=> (<label key= {
+                         status
+                     }
+    
+                     className="flex items-center space-x-2" > <input type="radio"
+                     name="payment"
+    
+                     value= {
+                         status
+                     }
+    
+                     checked= {
+                         paymentStatus===status
+                     }
+    
+                     onChange= {
+                         (e)=> setPaymentStatus(e.target.value)
+                     }
+    
+                     className="form-radio"
+    
+                     /> <span> {
+                         status
+                     }
+    
+                     </span> </label>))
+         }
+    
+         </div> {
+             paymentStatus==='Payée' && (<textarea placeholder="ici description..."
+                 className="mt-2 border p-2 w-full rounded"
+                 />)
+         }
+    
+         </div> {
+             /* Boutons 
+         }
+    
+         <div className="flex justify-end space-x-4"><button className="bg-gray-300 text-gray-700 p-2 rounded">Annuler</button><button className="bg-blue-500 text-white p-2 rounded">Accepter</button></div></div> */
