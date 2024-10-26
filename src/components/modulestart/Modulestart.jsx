@@ -3,9 +3,9 @@ import Materialtype from '../materialtype/Materialtype';
 import Limitertemps from '../limitertemp/Limitertemps';
 import Payement from '../payement/Payement';
 
-export default function Modulestart({ onCancel, desactive, onConfirm }) {  
-    const [paymentStatus, setPaymentStatus] = useState('non');
-    const [selectedMaterialType, setSelectedMaterialType] = useState('');
+export default function Modulestart({ onCancel, desactive, onConfirm }) {
+    const [paymentStatus, setPaymentStatus] = useState('Non Payée');
+    const [selectedMaterialType, setSelectedMaterialType] = useState('Ordinateur Portable');
     const [limiterTempsValues, setLimiterTempsValues] = useState({});
     const [errorMessageLimiterTemps, setErrorMessageLimiterTemps] = useState('');
     const [paymentInputs, setPaymentInputs] = useState({});
@@ -36,7 +36,7 @@ export default function Modulestart({ onCancel, desactive, onConfirm }) {
         // Réinitialisation du message d'erreur
         setErrorMessageLimiterTemps('');
 
-        // preparation les données à transmettre
+        // Préparation des données à transmettre
         const dataToSubmit = {
             selectedMaterialType,
             limiterTempsValues,
@@ -49,15 +49,14 @@ export default function Modulestart({ onCancel, desactive, onConfirm }) {
         console.log("Efa naloa ve izy : ", paymentInputs);
 
         // Appel de la fonction de rappel pour transmettre les données
-        onConfirm(dataToSubmit);  
-
+        onConfirm(dataToSubmit);
         desactive();
     };
 
     return (
         <Fragment>
             <div className="bg-white rounded-lg shadow-lg p-6 mx-auto">
-                <form className=' gap-3 '>
+                <form className='gap-3'>
                     <div className="flex gap-8">
                         <Materialtype onMaterialTypeChange={handleMaterialTypeChange} />
                         <Limitertemps onSubmit={handleLimitertempsSubmit} />

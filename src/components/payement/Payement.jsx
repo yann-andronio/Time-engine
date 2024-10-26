@@ -4,7 +4,7 @@ import s from "./payement.module.css";
 
 export default function Payement({ onPaymentChange }) {
     const [inputs, setInputs] = useState({
-        paymentType: "non",
+        paymentType: "Non Payée",
         description: "",
         amount: ""
     });
@@ -37,8 +37,8 @@ export default function Payement({ onPaymentChange }) {
                             <input
                                 type="radio"
                                 name="paymentType"
-                                value="non"
-                                checked={inputs.paymentType === "non"}
+                                value="Non Payée"
+                                checked={inputs.paymentType === "Non Payée"}
                                 onChange={handleChange}
                                 className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             />
@@ -49,8 +49,8 @@ export default function Payement({ onPaymentChange }) {
                             <input
                                 type="radio"
                                 name="paymentType"
-                                value="oui"
-                                checked={inputs.paymentType === "oui"}
+                                value=" Payée"
+                                checked={inputs.paymentType === " Payée"}
                                 onChange={handleChange}
                                 className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             />

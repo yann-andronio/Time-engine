@@ -1,12 +1,42 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 export default function CompteARebours({ data }) {
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    if (data.limiterTempsValues) {
+      const { heure, min } = data.limiterTempsValues;
+
+      // Vérifiez si les valeurs d'heures et de minutes sont valides
+      if ((heure && heure > 0) || (min && min > 0)) {
+        const totalMinutes = (parseInt(heure) || 0) * 60 + (parseInt(min) || 0);
+        setTimeLeft(totalMinutes); // En minutes
+
+        const timer = setInterval(() => {
+          setTimeLeft(prev => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1; // Décrémente chaque seconde
+          });
+        }, 1000);
+
+        return () => clearInterval(timer); // Nettoyer l'intervalle
+      }
+    }
+  }, [data.limiterTempsValues]);
+
+  const formatTime = (minutes) => {
+    const remainingMinutes = Math.floor(minutes);
+    const remainingSeconds = Math.round((minutes - remainingMinutes) * 60);
+    return `${remainingMinutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   return (
     <Fragment>
       <h2 className="text-xl font-bold mt-5">Données récupérées :</h2>
       <div className="mt-4 bg-gray-100 p-4 rounded shadow">
-
-        {/* Affichage du type de matériel uniquement s'il est valide */}
         {data.selectedMaterialType && data.selectedMaterialType.trim() !== '' && (
           <>
             <h3 className="text-lg font-semibold">Type de matériel :</h3>
@@ -14,43 +44,35 @@ export default function CompteARebours({ data }) {
           </>
         )}
 
-        {/* Affichage de la limitation de temps uniquement s'il y a des valeurs valides */}
         {data.limiterTempsValues && Object.keys(data.limiterTempsValues).length > 0 && (
           <>
             <h3 className="text-lg font-semibold">Limitation de temps :</h3>
             <ul>
-              {Object.entries(data.limiterTempsValues).map(([key, value]) => {
-                // Vérifiez si les heures et les minutes sont null ou 0
-                if ((key === "heure" && (value !== null && value !== 0)) ||
-                  (key === "min" && (value !== null && value !== 0)) ||
-                  (key !== "heure" && key !== "min" && value !== null && value !== 0 && value !== '')) {
-                  return (
-                    <li key={key}>
-                      {key}: {value}
-                    </li>
-                  );
-                }
-                return null; // Ignore les valeurs nulles ou 0
-              })}
+              {Object.entries(data.limiterTempsValues).map(([key, value]) => (
+                <li key={key}>
+                  {key}: {value}
+                </li>
+              ))}
             </ul>
           </>
         )}
 
-        {/* Affichage des informations de paiement uniquement s'il y a des valeurs valides */}
+        {timeLeft !== null && (
+          <>
+            <h3 className="text-lg font-semibold">Compte à rebours :</h3>
+            <p>{timeLeft > 0 ? formatTime(timeLeft) : "Temps écoulé !"}</p>
+          </>
+        )}
+
         {data.paymentInputs && Object.keys(data.paymentInputs).length > 0 && (
           <>
             <h3 className="text-lg font-semibold">Informations de paiement :</h3>
             <ul>
-              {Object.entries(data.paymentInputs).map(([key, value]) => {
-                if (value !== null && value !== 0 && value !== '') {
-                  return (
-                    <li key={key}>
-                      {key}: {value}
-                    </li>
-                  );
-                }
-                return null; // Ignore les valeurs nulles ou 0
-              })}
+              {Object.entries(data.paymentInputs).map(([key, value]) => (
+                <li key={key}>
+                  {key}: {value}
+                </li>
+              ))}
             </ul>
           </>
         )}

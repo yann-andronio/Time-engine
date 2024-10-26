@@ -4,8 +4,7 @@ import s from "./limitertemps.module.css";
 
 export default function Limitertemps({ onSubmit }) {
     const [timeLimit, setTimeLimit] = useState(false);
-    const [time, setTime] = useState(null);
-    const [inputs, setInputs] = useState({});
+    const [inputs, setInputs] = useState({ heure: '0', min: '0', money: null });
     const [isMoneySelected, setIsMoneySelected] = useState(false);
     const [isHeureManualSelected, setIsHeureManualSelected] = useState(false);
     const prevValuesRef = useRef({});
@@ -17,17 +16,16 @@ export default function Limitertemps({ onSubmit }) {
     };
 
     useEffect(() => {
-        const newValues = { ...inputs, timeLimit, time, isMoneySelected };
+        const newValues = { ...inputs, timeLimit, isMoneySelected };
         if (JSON.stringify(newValues) !== JSON.stringify(prevValuesRef.current)) {
             onSubmit(newValues);
             prevValuesRef.current = newValues;
         }
-    }, [inputs, timeLimit, time, isMoneySelected, onSubmit]);
+    }, [inputs, timeLimit, isMoneySelected, onSubmit]);
 
     useEffect(() => {
         if (!timeLimit) {
-            setTime(null);
-            setInputs({});
+            setInputs({ heure: '0', min: '0', money: null });
             setIsMoneySelected(false);
             setIsHeureManualSelected(false);
         }
@@ -36,7 +34,6 @@ export default function Limitertemps({ onSubmit }) {
     const handleMoneySelection = (checked) => {
         setIsMoneySelected(checked);
         if (checked) {
-            setTime(null);
             setInputs(prev => ({ ...prev, heure: '0', min: '0' }));
         } else {
             setInputs(prev => ({ ...prev, money: null }));
@@ -44,9 +41,8 @@ export default function Limitertemps({ onSubmit }) {
     };
 
     const handleTimeSelection = (selectedTime) => {
-        setTime(selectedTime);
+        setInputs(prev => ({ ...prev, heure: Math.floor(selectedTime / 60).toString(), min: (selectedTime % 60).toString() }));
         setIsHeureManualSelected(false);
-        setInputs(prev => ({ ...prev, heure: '0', min: '0' }));
     };
 
     return (
@@ -69,8 +65,8 @@ export default function Limitertemps({ onSubmit }) {
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
-                        {[15, 30, 45, 60, 75, 90].map((item, index) => (
-                            <label key={index} className={`p-3 border rounded-lg cursor-pointer transition-colors duration-300 ${time === item ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'} flex justify-center items-center`}>
+                        {[10, 20, 30, 40, 50, 60].map((item, index) => (
+                            <label key={index} className={`p-3 border rounded-lg cursor-pointer transition-colors duration-300 ${inputs.min === item.toString() ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'} flex justify-center items-center`}>
                                 <input
                                     type="radio"
                                     name="time"
@@ -91,7 +87,6 @@ export default function Limitertemps({ onSubmit }) {
                                 name="time"
                                 value="manual"
                                 onChange={() => {
-                                    setTime(null);
                                     setIsHeureManualSelected(true);
                                 }}
                                 className="hidden"
@@ -103,7 +98,7 @@ export default function Limitertemps({ onSubmit }) {
                         <input
                             type='number'
                             name="heure"
-                            defaultValue="0"
+                            value={inputs.heure}
                             onChange={handleChange}
                             className={`${s.heure} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected) ? 'bg-gray-200' : ''}`}
                             disabled={!timeLimit || !isHeureManualSelected}
@@ -111,7 +106,7 @@ export default function Limitertemps({ onSubmit }) {
                         <input
                             type='number'
                             name="min"
-                            defaultValue="0"
+                            value={inputs.min}
                             onChange={handleChange}
                             className={`${s.minute} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected) ? 'bg-gray-200' : ''}`}
                             disabled={!timeLimit || !isHeureManualSelected}
