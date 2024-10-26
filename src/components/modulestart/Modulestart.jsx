@@ -51,7 +51,7 @@ export default function Modulestart({ onCancel, desactive, onConfirm }) {
         // Appel de la fonction de rappel pour transmettre les données
         onConfirm(dataToSubmit);
         desactive();
-    };
+    };  
 
     return (
         <Fragment>
