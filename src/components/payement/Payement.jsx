@@ -1,10 +1,10 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { FiDollarSign } from 'react-icons/fi';
 import s from "./payement.module.css";
 
-export default function Payement({ onChoose }) {
+export default function Payement({ onPaymentChange }) {
     const [inputs, setInputs] = useState({
-        paymentType: "non", 
+        paymentType: "non",
         description: "",
         amount: ""
     });
@@ -12,9 +12,16 @@ export default function Payement({ onChoose }) {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({ ...values, [name]: value }));
-        onChoose({ ...inputs, [name]: value });
+        setInputs(values => {
+            const updatedValues = { ...values, [name]: value };
+            onPaymentChange(updatedValues); 
+            return updatedValues;
+        });
     };
+
+    useEffect(() => {
+        onPaymentChange(inputs); 
+    }, []);
 
     return (
         <Fragment>
@@ -26,8 +33,6 @@ export default function Payement({ onChoose }) {
                     </legend>
 
                     <div className={`${s.BoxPayements} mb-4`}>
-                        
-                        {/*  de type de paiement */}
                         <label className="flex items-center space-x-2 cursor-pointer transition-colors duration-200 hover:bg-gray-100 rounded-lg p-2">
                             <input
                                 type="radio"
@@ -53,7 +58,6 @@ export default function Payement({ onChoose }) {
                         </label>
                     </div>
 
-                    {/* description */}
                     <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">Description</label>
                         <textarea
@@ -66,6 +70,8 @@ export default function Payement({ onChoose }) {
                         />
                     </div>
 
+                    
+
                     {/* Champ de montant (si nécessaire) */}
                     {/* <div className="mt-4">
                         <label className="block text-sm font-medium text-gray-700">Montant</label>
@@ -75,7 +81,7 @@ export default function Payement({ onChoose }) {
                             name="amount"
                             value={inputs.amount}
                             onChange={handleChange}
-                            className={`  ${inputs.paymentType === "non" ?  'bg-orange-400' : ''} mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200`}
+                            className={`  ${inputs.paymentType === "non" ? 'bg-orange-400' : ''} mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200`}
                             placeholder="Entrez un montant..."
                         />
                     </div> */}

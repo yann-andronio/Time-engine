@@ -1,0 +1,31 @@
+ /* const handleClick=()=> {
+     const {
+         timeLimit,
+         time,
+         money,
+         heure,
+         min
+     }
+
+     =limiterTempsValues;
+
+     // Vérification des conditions de limiterTemps
+     if (timeLimit) {
+
+         // Vérifie si ni `time`, ni `money`, ni `heure` et `min` ne sont définis correctement
+         if ( !time && !money && (heure==="0" || heure==null) && (min==="0" || min==null)) {
+             setErrorMessageLimiterTemps('Veuillez sélectionner un temps ou un montant avant de confirmer.');
+             return;
+         }
+     }
+
+     // Réinitialisation du message d'erreur
+     setErrorMessageLimiterTemps('');
+
+     // Logique supplémentaire après la validation
+     console.log('Type de matériel choisi:', selectedMaterialType);
+     console.log('Valeurs de limitation de temps:', limiterTempsValues);
+     console.log("Efa naloa ve izy : ", paymentStatus);
+ }
+
+ ; */

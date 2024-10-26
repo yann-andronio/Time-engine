@@ -37,7 +37,6 @@ export default function Limitertemps({ onSubmit }) {
         setIsMoneySelected(checked);
         if (checked) {
             setTime(null);
-            setIsHeureManualSelected(false);
             setInputs(prev => ({ ...prev, heure: '0', min: '0' }));
         } else {
             setInputs(prev => ({ ...prev, money: null }));
@@ -78,7 +77,7 @@ export default function Limitertemps({ onSubmit }) {
                                     value={item}
                                     onChange={() => handleTimeSelection(item)}
                                     className="hidden"
-                                    disabled={!timeLimit || isMoneySelected}
+                                    disabled={!timeLimit}
                                 />
                                 {item} minutes
                             </label>
@@ -96,7 +95,7 @@ export default function Limitertemps({ onSubmit }) {
                                     setIsHeureManualSelected(true);
                                 }}
                                 className="hidden"
-                                disabled={!timeLimit || isMoneySelected}
+                                disabled={!timeLimit}
                             />
                             H/m
                         </label>
@@ -106,16 +105,16 @@ export default function Limitertemps({ onSubmit }) {
                             name="heure"
                             defaultValue="0"
                             onChange={handleChange}
-                            className={`${s.heure} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected || isMoneySelected) ? 'bg-gray-200' : ''}`}
-                            disabled={!timeLimit || isMoneySelected || !isHeureManualSelected}
+                            className={`${s.heure} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected) ? 'bg-gray-200' : ''}`}
+                            disabled={!timeLimit || !isHeureManualSelected}
                         />
                         <input
                             type='number'
                             name="min"
                             defaultValue="0"
                             onChange={handleChange}
-                            className={`${s.minute} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected || isMoneySelected) ? 'bg-gray-200' : ''}`}
-                            disabled={!timeLimit || isMoneySelected || !isHeureManualSelected}
+                            className={`${s.minute} text-center p-2 border rounded-lg ${(!timeLimit || !isHeureManualSelected) ? 'bg-gray-200' : ''}`}
+                            disabled={!timeLimit || !isHeureManualSelected}
                         />
                     </div>
 

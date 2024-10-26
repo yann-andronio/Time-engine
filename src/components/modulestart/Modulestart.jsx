@@ -3,31 +3,30 @@ import Materialtype from '../materialtype/Materialtype';
 import Limitertemps from '../limitertemp/Limitertemps';
 import Payement from '../payement/Payement';
 
-export default function Modulestart({ onCancel }) {
+export default function Modulestart({ onCancel, desactive, onConfirm }) {  
     const [paymentStatus, setPaymentStatus] = useState('non');
     const [selectedMaterialType, setSelectedMaterialType] = useState('');
     const [limiterTempsValues, setLimiterTempsValues] = useState({});
     const [errorMessageLimiterTemps, setErrorMessageLimiterTemps] = useState('');
-    
+    const [paymentInputs, setPaymentInputs] = useState({});
 
     const handleMaterialTypeChange = (type) => {
         setSelectedMaterialType(type);
     };
 
     const handleLimitertempsSubmit = (proprieteTemps) => {
-        setLimiterTempsValues(proprieteTemps); 
+        setLimiterTempsValues(proprieteTemps);
     };
 
-    const handlePayementSubmit = (chossePayements ) => {
-        setPaymentStatus(chossePayements)
-    }
+    const handlePaymentChange = (inputs) => {
+        setPaymentInputs(inputs);
+    };
 
     const handleClick = () => {
         const { timeLimit, time, money, heure, min } = limiterTempsValues;
 
         // Vérification des conditions de limiterTemps
         if (timeLimit) {
-            // Vérifie si ni `time`, ni `money`, ni `heure` et `min` ne sont définis correctement
             if (!time && !money && (heure === "0" || heure == null) && (min === "0" || min == null)) {
                 setErrorMessageLimiterTemps('Veuillez sélectionner un temps ou un montant avant de confirmer.');
                 return;
@@ -37,14 +36,23 @@ export default function Modulestart({ onCancel }) {
         // Réinitialisation du message d'erreur
         setErrorMessageLimiterTemps('');
 
+        // preparation les données à transmettre
+        const dataToSubmit = {
+            selectedMaterialType,
+            limiterTempsValues,
+            paymentInputs,
+        };
+
         // Logique supplémentaire après la validation
         console.log('Type de matériel choisi:', selectedMaterialType);
         console.log('Valeurs de limitation de temps:', limiterTempsValues);
-        console.log("Efa naloa ve izy : ", paymentStatus);
+        console.log("Efa naloa ve izy : ", paymentInputs);
+
+        // Appel de la fonction de rappel pour transmettre les données
+        onConfirm(dataToSubmit);  
+
+        desactive();
     };
-
-
-
 
     return (
         <Fragment>
@@ -53,15 +61,9 @@ export default function Modulestart({ onCancel }) {
                     <div className="flex gap-8">
                         <Materialtype onMaterialTypeChange={handleMaterialTypeChange} />
                         <Limitertemps onSubmit={handleLimitertempsSubmit} />
-                        <Payement onchoose={handlePayementSubmit}  />
+                        <Payement onPaymentChange={handlePaymentChange} />
                     </div>
-                    {/* erreur */}
                     {errorMessageLimiterTemps && <p className="text-red-600">{errorMessageLimiterTemps}</p>}
-
-
-
-
-                    {/* Confirmation */}
                     <div className="flex justify-end mt-4 gap-4">
                         <button
                             type="button"
