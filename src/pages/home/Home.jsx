@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import CardStart from '../../components/cardStart/CardStart';
-import s from "./Home.module.css";
 import Modulestart from '../../components/modulestart/Modulestart';
+import s from "./home.module.css";
 
 export default function Home() {
     const [selectedCard, setSelectedCard] = useState(null);
