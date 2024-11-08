@@ -7,9 +7,11 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
     const [startDate, setStartDate] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
+    const [totalAmount, setTotalAmount] = useState(0);
 
     let timeSelected = 0;
 
+    // Calcul du temps sélectionné
     if (data?.limiterTempsValues) {
         if (data.limiterTempsValues.isHeureManualSelected) {
             const heures = parseInt(data.limiterTempsValues.heure) || 0;
@@ -19,6 +21,14 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
             timeSelected = (data.limiterTempsValues.time || 0) * 60 * 1000;
         }
     }
+
+    // Calcul du montant en fonction du temps sélectionné (1000 Ar pour 1 heure)
+    useEffect(() => {
+        if (timeSelected > 0) {
+            const minutesSelected = timeSelected / (60 * 1000); // Convertir en minutes
+            setTotalAmount(Math.round(minutesSelected * (1000 / 60)));
+        }
+    }, [timeSelected]);
 
     useEffect(() => {
         if (isRunning && timeSelected > 0 && !startDate) {
@@ -30,17 +40,24 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         if (!isRunning) {
             setIsRunning(true);
             setElapsedTime(0);
+            if (timeSelected === 0) setTotalAmount(0); // Réinitialise le montant pour le mode illimité
         }
     };
 
+    // Mettre à jour le temps écoulé en mode illimité et calculer le montant en fonction des minutes écoulées
     useEffect(() => {
         if (timeSelected <= 0 && isRunning) {
             const interval = setInterval(() => {
                 setElapsedTime((prev) => prev + 1);
+
+                // Mise à jour du montant en mode illimité (1000 Ar pour 1 heure, soit environ 16.67 Ar par minute)
+                const minutesElapsed = (elapsedTime + 1) / 60;
+                setTotalAmount(Math.round(minutesElapsed * (1000 / 60)));
             }, 1000);
+
             return () => clearInterval(interval);
         }
-    }, [timeSelected, isRunning]);
+    }, [timeSelected, isRunning, elapsedTime]);
 
     const renderer = ({ hours, minutes, seconds, completed }) => {
         if (completed) {
@@ -78,6 +95,7 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
                                         ? `${data.limiterTempsValues.heure}h ${data.limiterTempsValues.min}min`
                                         : `${data.limiterTempsValues.time} min`}
                                 </p>
+                                <p className="text-lg font-semibold">Montant : {totalAmount} Ar</p>
                                 {startDate && (
                                     <Countdown
                                         date={startDate}
@@ -89,17 +107,12 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
                             <>
                                 <p className="text-2xl font-semibold">Temps : Illimité</p>
                                 <p className="text-2xl font-semibold">Temps écoulé : {formatElapsedTime()}</p>
+                                <p className="text-lg font-semibold">Montant : {totalAmount} Ar</p>
                             </>
                         )}
                         <p className="text-xl">
                             {data.selectedMaterialType} : {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
                         </p>
-
-                            <p className="text-lg font-semibold">
-                                Total : {data.paymentInputs?.amount ? `${data.paymentInputs.amount} Ar` : 'N/A'}
-                            </p>
-
-
 
                         <button
                             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700"

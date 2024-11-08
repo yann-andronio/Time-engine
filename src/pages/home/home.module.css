@@ -1,3 +1,200 @@
-.BoxMain{
-    
+/* import React,
+{
+Fragment,
+useEffect,
+useState
 }
+
+from 'react';
+
+import {
+    FaCirclePlay
+}
+
+from "react-icons/fa6";
+import Countdown from 'react-countdown';
+import s from "./cardstart.module.css";
+
+export default function CardStart({
+    numero, onClick, data, onOrderConfirm
+
+}) {
+    const [startDate,
+    setStartDate]=useState(null);
+    const [elapsedTime,
+    setElapsedTime]=useState(0);
+    const [isRunning,
+    setIsRunning]=useState(false);
+
+    let timeSelected=0;
+
+    // Si 'money' est présent, calcule le temps en fonction de money.
+    if (data?.limiterTempsValues) {
+        const money=parseInt(data.limiterTempsValues.money) || 0;
+
+        // Règle de 3 pour calculer le temps en fonction de money (100 Ar = 1 minute).
+        timeSelected=(money * 1) / 100; // Le résultat est en minutes
+        timeSelected=timeSelected * 60 * 1000; // Convertir en millisecondes pour Countdown
+    }
+
+    useEffect(()=> {
+            if (isRunning && timeSelected > 0 && !startDate) {
+                setStartDate(Date.now() + timeSelected); // Démarrer le compte à rebours
+            }
+        }
+
+        , [isRunning, timeSelected, startDate]);
+
+    const startTimer=()=> {
+        if ( !isRunning) {
+            setIsRunning(true);
+            setElapsedTime(0);
+        }
+    }
+
+    ;
+
+    useEffect(()=> {
+            if (timeSelected <=0 && isRunning) {
+                const interval=setInterval(()=> {
+                        setElapsedTime((prev)=> prev + 1);
+                    }
+
+                    , 1000);
+                return ()=> clearInterval(interval);
+            }
+        }
+
+        , [timeSelected, isRunning]);
+
+    const renderer=({
+        hours, minutes, seconds, completed
+
+    })=> {
+    if (completed) {
+        return <span>Temps écoulé !</span>;
+    }
+
+    else {
+        return <span>Temps restant : {
+            hours
+        }
+
+        h {
+            minutes
+        }
+
+        min {
+            seconds
+        }
+
+        sec</span>;
+    }
+}
+
+;
+
+const formatElapsedTime=()=> {
+    const hours=Math.floor(elapsedTime / 3600);
+    const minutes=Math.floor((elapsedTime % 3600) / 60);
+    const seconds=elapsedTime % 60;
+
+    return `$ {
+        hours
+    }
+
+    h $ {
+        minutes
+    }
+
+    min $ {
+        seconds
+    }
+
+    sec`;
+}
+
+;
+
+return (<Fragment> <div className= {
+        `$ {
+            s.cardBox
+        }
+
+        cursor-pointer h-48 p-7 flex flex-col justify-center items-center gap-4 bg-[#541ec144] text-white rounded-lg shadow-lg`
+    }
+
+    onClick= {
+        ()=> {
+            onClick(); startTimer();
+        }
+    }
+
+    > {
+        !data ? (<> <FaCirclePlay size= {
+                70
+            }
+
+            className="text-white animate-spin-slow" /> <p className='text-3xl font-semibold tracking-wide' >START</p> <p className='text-3xl font-semibold' >#{numero}</p> </>) : (<div className="flex flex-col items-center" > {
+                timeSelected > 0 ? (<> <p className="text-2xl font-semibold" > Temps : {
+                        data.limiterTempsValues.isHeureManualSelected ? `$ {
+                            data.limiterTempsValues.heure
+                        }
+
+                        h $ {
+                            data.limiterTempsValues.min
+                        }
+
+                        min` : `$ {
+                            data.limiterTempsValues.time
+                        }
+
+                        min`
+                    }
+
+                    </p> {
+                        startDate && (<Countdown date= {
+                                startDate
+                            }
+
+                            renderer= {
+                                renderer
+                            }
+
+                            />)
+                    }
+
+                    </>) : (<> <p className="text-2xl font-semibold" >Temps : Illimité</p> <p className="text-2xl font-semibold" >Temps écoulé : {
+                        formatElapsedTime()
+                    }
+
+                    </p> </>)
+            }
+
+            <p className="text-xl" > {
+                data.selectedMaterialType
+            }
+
+            : {
+                data.paymentInputs?.paymentType==='Payée' ? 'Payée' : 'Non Payée'
+            }
+
+            </p> <p className="text-lg font-semibold" > Total : {
+                data.paymentInputs?.amount ? `$ {
+                    data.paymentInputs.amount
+                }
+
+                Ar` : 'N/A'
+            }
+
+            </p> <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700"
+
+            onClick= {
+                onOrderConfirm
+            }
+
+            > Confirmer </button> </div>)
+    }
+
+    </div> </Fragment>);
+} */

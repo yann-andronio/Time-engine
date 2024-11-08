@@ -1,8 +1,18 @@
-.cardBox{
+.cardBox {
     transition: 0.3s;
 }
-.cardBox:hover{
+
+.cardBox:hover {
     transform: scale(1.02);
     transition: 0.3s;
 }
 
+/* <p className="text-lg font-semibold">Total : {
+    data.paymentInputs?.amount ? `$ {
+        data.paymentInputs.amount
+    }
+
+    Ar` : 'N/A'
+}
+
+</p> */
