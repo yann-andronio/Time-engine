@@ -70,10 +70,10 @@ export default function Home() {
 
     return (
         <Fragment>
-            <div className={`${s.BigBox} p-7 h-screen`}>
-                <div className="navbar text-center">
+            <div className={`${s.BigBox} p-7  `}>
+                {/* <div className="navbar text-center">
                     <h1 className='text-blue-800 text-4xl'>cyber</h1>
-                </div>
+                </div> */}
                 <main className={`${s.BoxMain} relative`}>
                     <div className={`${s.BoxParents} lg:grid-cols-3 md:grid-cols-2 mt-10 grid grid-cols-1 gap-4`}>
                         {Array(9).fill(0).map((_, index) => (

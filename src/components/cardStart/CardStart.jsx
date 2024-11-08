@@ -1,5 +1,11 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { FaCirclePlay, FaPause, FaPlay, FaStop } from "react-icons/fa6";
+import { FaPlus } from 'react-icons/fa6';
+import { FaPlusCircle } from 'react-icons/fa';
+import { FaHourglassHalf } from 'react-icons/fa6';
+import { FaClipboard } from 'react-icons/fa6';
+import { FaClock } from 'react-icons/fa6';
+import { FaMoneyBillAlt } from 'react-icons/fa';
 import s from "./cardstart.module.css";
 
 export default function CardStart({ numero, onClick, data, resetCard }) {
@@ -8,12 +14,13 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false); // Etat pour gérer la pause
     const [totalAmount, setTotalAmount] = useState(0);
-    const [showConfirmModal, setShowConfirmModal] = useState(false); // Etat pour la modal de confirmation
-    const [selectedCardData, setSelectedCardData] = useState(null); // Etat pour stocker les données du card sélectionné
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // Etat pour afficher la modale de confirmation
+    const [showAddTimeModal, setShowAddTimeModal] = useState(false); // Etat pour afficher la modale d'ajout de temps
+    const [timeToAdd, setTimeToAdd] = useState({ heures: 0, minutes: 0 }); // Temps à ajouter
+    const [selectedCardData, setSelectedCardData] = useState(null); // Données de la carte sélectionnée
 
     const ratePerSecond = 1000 / 60 / 60; // 1000 AR pour 60 minutes, soit environ 0.28 AR par seconde
 
-    // La fonction resetCard ne sera pas modifiée
     const resetCardHandler = () => {
         resetCard(numero); // Appelle la fonction resetCard du parent pour réinitialiser la carte
         setTotalAmount(0); // Réinitialise totalAmount
@@ -21,7 +28,8 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
         setElapsedTime(0); // Réinitialise le temps écoulé pour le mode illimité
         setIsRunning(false); // Arrête le chronomètre
         setIsPaused(false); // Réinitialise l'état de pause
-        setShowConfirmModal(false); // Ferme la modal
+        setShowConfirmModal(false); // Ferme la modale
+        setShowAddTimeModal(false); // Ferme la modale d'ajout de temps
     };
 
     let timeSelected = 0;
@@ -83,18 +91,23 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     };
 
     const stopTimer = () => {
-        setSelectedCardData(data); // Sauvegarder les données du card sélectionné
-        setShowConfirmModal(true); // Afficher la modal de confirmation
-    };
-
-    const confirmStop = () => {
-        setIsRunning(false); // Arrêter le timer
-        setRemainingTime(0); // Réinitialiser le temps restant
-        setShowConfirmModal(false); // Fermer la modal de confirmation
+        setSelectedCardData(data); // Sauvegarde des données actuelles de la carte
+        setShowConfirmModal(true); // Affiche la modale de confirmation
     };
 
     const cancelStop = () => {
-        setShowConfirmModal(false); // Fermer la modal sans stopper
+        setShowConfirmModal(false); // Fermer la modale sans arrêter le timer
+    };
+
+    const handleAddTime = () => {
+        const additionalTime = (timeToAdd.heures * 60 + timeToAdd.minutes) * 60 * 1000;
+        setRemainingTime((prev) => prev + additionalTime); // Ajouter le temps saisi au temps restant
+        setShowAddTimeModal(false); // Fermer la modale
+    };
+
+    const handleTimeChange = (e) => {
+        const { name, value } = e.target;
+        setTimeToAdd((prev) => ({ ...prev, [name]: value }));
     };
 
     const formatRemainingTime = (time) => {
@@ -107,53 +120,119 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     return (
         <Fragment>
             <div
-                className={`${s.cardBox} cursor-pointer h-48 p-7 flex flex-col justify-center items-center gap-4 bg-[#541ec144] text-white rounded-lg shadow-lg`}
+                className={`${s.cardBox} cursor-pointer h-60 p-7 flex flex-col justify-center  gap-4 bg-[#6c757d] text-white rounded-lg shadow-lg`}
                 onClick={() => { onClick(); startTimer(); }}
             >
                 {!data ? (
                     <>
-                        <FaCirclePlay size={70} className="text-white animate-spin-slow" />
-                        <p className='text-3xl font-semibold tracking-wide'>START</p>
-                        <p className='text-3xl font-semibold'>#{numero}</p>
+                        <div className='items-center flex justify-center gap-4'>
+                            <FaCirclePlay size={70} className="text-[#f8f9fa] animate-spin-slow" />
+                            <p className='text-3xl font-semibold tracking-wide'>START</p>
+                            <p className='text-3xl font-semibold'>#{numero}</p>
+                        </div>
                     </>
                 ) : (
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-col ">
                         {timeSelected > 0 ? (
                             <>
-                                <p className="text-2xl font-semibold">
-                                    Temps : {data.limiterTempsValues.isHeureManualSelected
-                                        ? `${data.limiterTempsValues.heure}h ${data.limiterTempsValues.min}min`
-                                        : `${data.limiterTempsValues.time} min`}
-                                </p>
-                                <p className="text-lg font-semibold">Montant : {totalAmount} Ar</p>
-                                <p className="text-2xl font-semibold">
-                                    Temps restant : {formatRemainingTime(remainingTime)}
-                                </p>
+                                <div className=" rounded-lg shadow-md text-gray-100 ">
+                                    <p className="text-sm text-[#f8f9fa] flex justify-center items-center font-semibold mb-2  gap-1">
+                                        {/* <FaClock className="text-gray-400" /> */}
+                                        Temps :
+                                        <span className="font-medium text-gray-50">
+                                            {data.limiterTempsValues.isHeureManualSelected
+                                                ? `${data.limiterTempsValues.heure}h ${data.limiterTempsValues.min}min`
+                                                : `${data.limiterTempsValues.time} min`}
+                                        </span>
+                                    </p>
+
+                                    <p className="text-base font-semibold text-gray-100 mt-1 flex items-center gap-2 p-2 rounded-md shadow-sm bg-opacity-80 bg-gray-700">
+                                        <FaHourglassHalf className="text-gray-400" />
+                                        Temps restant :
+                                        <span className="font-medium text-gray-50">{formatRemainingTime(remainingTime)}</span>
+                                    </p>
+                                    <p className="text-base font-semibold text-gray-50 mt-1 flex items-center gap-2 p-2 rounded-md bg-opacity-90 bg-[#2d3338] shadow-sm">
+                                        <FaMoneyBillAlt className="text-green-500" />
+                                        <span className="text-sm text-gray-200">Montant :</span>
+                                        <span className="text-xl text-[#ff8a00] font-bold">{totalAmount} Ar</span>
+                                    </p>
+
+
+                                </div>
+
                             </>
                         ) : (
                             <>
-                                <p className="text-2xl font-semibold">Temps : Illimité</p>
-                                <p className="text-2xl font-semibold">Temps écoulé : {formatRemainingTime(elapsedTime)}</p>
-                                <p className="text-lg font-semibold">Montant : {totalAmount} Ar</p>
+                                <div className="flex items-center justify-center mb-2">
+                                    <p className="text-sm text-[#f8f9fa]">
+                                        <span className="font-semibold">Temps :</span>
+                                        <span className="font-medium ml-1">{timeSelected > 0 ? `Limité à ${data.limiterTempsValues.time} min` : 'Illimité'}</span>
+                                    </p>
+                                </div>
+
+                                <p className="text-base font-semibold text-gray-100 mt-1 flex items-center gap-2 p-2 rounded-md shadow-sm bg-opacity-80 bg-gray-700">
+                                    <FaClock className="text-gray-400" />
+                                    <span className="text-sm font-medium opacity-80">Temps écoulé :</span>
+                                    <span className="font-semibold text-gray-50">{formatRemainingTime(elapsedTime)}</span>
+                                </p>
+
+                                <p className="text-base font-semibold text-gray-50 mt-1 flex items-center gap-2 p-2 rounded-md bg-opacity-90 bg-[#2d3338] shadow-sm">
+                                    <FaMoneyBillAlt className="text-green-500" />
+                                    <span className="text-sm text-gray-200">Montant :</span>
+                                    <span className="text-xl text-[#ff8a00] font-bold">{totalAmount} Ar</span>
+                                </p>
+
+
                             </>
+
+
                         )}
-                        <p className="text-xl">
-                            {data.selectedMaterialType} : {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
+                        <p className="text-lg font-medium text-gray-200 flex mt-2 items-center gap-2 p-2 bg-[#3e444a] rounded-md">
+                            <FaClipboard className="text-gray-400" />
+                            {data.selectedMaterialType} :
+                            <span className={`font-semibold px-2 rounded ${data.paymentInputs?.paymentType === 'Payée' ? 'text-green-500 bg-green-900/30' : 'text-red-500 bg-red-900/30'}`}>
+                                {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
+                            </span>
                         </p>
-                        <div className='flex gap-2'>
-                            <button onClick={togglePause} className=" flex justify-center gap-2 items-center mt-4 p-2 bg-blue-500 rounded text-white">
-                                {isPaused ? <FaPlay /> : <FaPause />}
-                                {isPaused ? "Reprendre" : "Pause"}
+
+                        <div className="flex gap-3 mt-4">
+                            <button
+                                onClick={togglePause}
+                                className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 rounded-md text-white font-medium hover:bg-blue-600 transition-all duration-200 ease-in-out shadow-md transform active:scale-95"
+                            >
+                                {isPaused ? <FaPlay className="text-lg" /> : <FaPause className="text-lg" />}
+                                <span className="text-sm">{isPaused ? 'Reprendre' : 'Pause'}</span>
                             </button>
-                            <button onClick={stopTimer} className=" flex justify-center gap-2 items-center mt-4 p-2 bg-red-500 rounded text-white">
-                                <FaStop /> Stop
+
+                            <button
+                                onClick={stopTimer}
+                                className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 rounded-md text-white font-medium hover:bg-red-600 transition-all duration-200 ease-in-out shadow-md transform active:scale-95"
+                            >
+                                <FaStop className="text-lg" />
+                                <span className="text-sm">Arrêter</span>
                             </button>
+
+                            {timeSelected !== 0 && (
+                                    <button
+                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-[#ff8a00] rounded-md text-white font-medium hover:bg-[#d57b00] transition-all duration-200 ease-in-out shadow-md transform active:scale-95"
+                                        onClick={() => setShowAddTimeModal(true)}
+                                    >
+                                        <FaPlusCircle className="text-white text-lg" />
+                                        <span className="text-sm">Ajouter du temps</span>
+                                    </button>
+
+
+
+                            )}
+
                         </div>
+
                     </div>
                 )}
             </div>
 
-            {/* Modal de confirmation, sans modification */}
+            {/* Modal de confirmation */}
+
             {showConfirmModal && selectedCardData && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded shadow-lg text-center">
@@ -173,6 +252,59 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
                     </div>
                 </div>
             )}
+
+            {/* Modal d'ajout de temps */}
+            {showAddTimeModal && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-5 rounded shadow-lg">
+                        <h2 className="text-xl font-semibold">Ajouter du temps</h2>
+                        <div className="flex gap-4 mt-4">
+                            <div>
+                                <label htmlFor="heures" className="block">Heures</label>
+                                <input
+                                    type="number"
+                                    id="heures"
+                                    name="heures"
+                                    value={timeToAdd.heures}
+                                    onChange={handleTimeChange}
+                                    min="0"
+                                    className="border p-2"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="minutes" className="block">Minutes</label>
+                                <input
+                                    type="number"
+                                    id="minutes"
+                                    name="minutes"
+                                    value={timeToAdd.minutes}
+                                    onChange={handleTimeChange}
+                                    min="0"
+                                    className="border p-2"
+                                />
+                            </div>
+                        </div>
+                        <div className="mt-4">
+                            <button
+                                onClick={handleAddTime}
+                                className="p-2 bg-green-500 rounded text-white"
+                            >
+                                Ajouter
+                            </button>
+                            <button
+                                onClick={() => setShowAddTimeModal(false)}
+                                className="ml-2 p-2 bg-gray-500 rounded text-white"
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Fragment>
     );
 }
+
+
+
+

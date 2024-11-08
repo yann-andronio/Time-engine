@@ -113,7 +113,7 @@ export default function Limitertemps({ onSubmit }) {
                         />
                     </div>
 
-                    <div className="mt-4 grid grid-cols-3 gap-4">
+                    {/* <div className="mt-4 grid grid-cols-3 gap-4">
                         <div className="flex justify-start items-center">
                             <label className="flex items-center gap-4">
                                 <input
@@ -138,7 +138,7 @@ export default function Limitertemps({ onSubmit }) {
                                 placeholder="Entrez le montant"
                             />
                         </div>
-                    </div>
+                    </div> */}
                 </fieldset>
             </div>
         </Fragment>

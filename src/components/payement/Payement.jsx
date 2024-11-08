@@ -59,7 +59,7 @@ export default function Payement({ onPaymentChange }) {
 
               
 
-                        <div className="mt-4">
+                        {/* <div className="mt-4">
                             <label className="block text-sm font-medium text-gray-700">Description</label>
                             <textarea
                                 name="description"
@@ -69,7 +69,7 @@ export default function Payement({ onPaymentChange }) {
                                 rows="5"
                                 placeholder="Entrez une description..."
                             />
-                        </div>
+                        </div> */}
                     
                 </fieldset>
             </div>
