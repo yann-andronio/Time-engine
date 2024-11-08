@@ -7,10 +7,13 @@ export default function Home() {
     const [selectedCard, setSelectedCard] = useState(null);
     const [showModuleStart, setShowModuleStart] = useState(false);
     const [datarecupered, setDatarecupered] = useState({});
+    const [isTimerRunning, setIsTimerRunning] = useState({}); // Gérer l'état du chronomètre pour chaque carte
 
     const handleCardClick = (index) => {
-        setSelectedCard(index);
-        setShowModuleStart(true);
+        if (!isTimerRunning[index]) { // Vérifie si le chronomètre de la carte cliquée n'a pas démarré
+            setSelectedCard(index);
+            setShowModuleStart(true);
+        }
     };
 
     const handleCancel = () => {
@@ -25,8 +28,7 @@ export default function Home() {
     const handleConfirm = (data) => {
         console.log("Données confirmées reçues depuis Modulestart:", data);
 
-        // Ajout du montant à paymentInputs à partir de limiterTempsValues
-        const amount = data?.limiterTempsValues?.money || 'N/A';  // Si money existe, on le prend, sinon on met 'N/A'
+        const amount = data?.limiterTempsValues?.money || 'N/A';
 
         setDatarecupered(prevData => ({
             ...prevData,
@@ -40,13 +42,31 @@ export default function Home() {
                 },
                 paymentInputs: {
                     ...data.paymentInputs,
-                    amount: amount  // On met money dans paymentInputs.amount
+                    amount: amount
                 }
             }
         }));
+
+        // Mettre à jour l'état du chronomètre uniquement pour la carte sélectionnée
+        setIsTimerRunning(prevState => ({
+            ...prevState,
+            [selectedCard]: true
+        }));
+        
         setShowModuleStart(false);
     };
 
+    // Fonction pour réinitialiser la carte
+    const resetCard = (index) => {
+        setDatarecupered(prevData => ({
+            ...prevData,
+            [index]: null, // Réinitialiser les données de la carte
+        }));
+        setIsTimerRunning(prevState => ({
+            ...prevState,
+            [index]: false // Réinitialiser l'état du chronomètre
+        }));
+    };
 
     return (
         <Fragment>
@@ -61,7 +81,9 @@ export default function Home() {
                                 <CardStart
                                     numero={index}
                                     onClick={() => handleCardClick(index)}
-                                    data={datarecupered[index]} // Passe les données récupérées spécifiques à chaque carte
+                                    data={datarecupered[index]}
+                                    isTimerRunning={isTimerRunning[index] || false} // Passe l'état spécifique du chronomètre de chaque carte
+                                    resetCard={() => resetCard(index)} // Passer la fonction pour réinitialiser la carte
                                 />
                             </Fragment>
                         ))}
