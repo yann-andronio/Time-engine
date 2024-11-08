@@ -8,7 +8,7 @@ export default function Modulestart({ onCancel, desactive, onConfirm }) {
     const [selectedMaterialType, setSelectedMaterialType] = useState('Ordinateur Portable');
     const [limiterTempsValues, setLimiterTempsValues] = useState({});
     const [errorMessageLimiterTemps, setErrorMessageLimiterTemps] = useState('');
-    const [paymentInputs, setPaymentInputs] = useState({});
+    const [paymentInputs, setPaymentInputs] = useState({ status: false }); // Initie `status` comme non payée
 
     const handleMaterialTypeChange = (type) => {
         setSelectedMaterialType(type);
@@ -40,18 +40,13 @@ export default function Modulestart({ onCancel, desactive, onConfirm }) {
         const dataToSubmit = {
             selectedMaterialType,
             limiterTempsValues,
-            paymentInputs,
+            paymentInputs, // Transmet l'état du paiement
         };
-
-        // Logique supplémentaire après la validation
-        console.log('Type de matériel choisi:', selectedMaterialType);
-        console.log('Valeurs de limitation de temps:', limiterTempsValues);
-        console.log("Efa naloa ve izy : ", paymentInputs);
 
         // Appel de la fonction de rappel pour transmettre les données
         onConfirm(dataToSubmit);
         desactive();
-    };  
+    };
 
     return (
         <Fragment>

@@ -4,13 +4,12 @@ import Countdown from 'react-countdown';
 import s from "./cardstart.module.css";
 
 export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
-    const [startDate, setStartDate] = useState(null); // État pour la date de début
-    const [elapsedTime, setElapsedTime] = useState(0); // État pour le temps écoulé
-    const [isRunning, setIsRunning] = useState(false); // État du statut du chronomètre
+    const [startDate, setStartDate] = useState(null);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
 
     let timeSelected = 0;
 
-    // Vérification des valeurs du temps sélectionné
     if (data?.limiterTempsValues) {
         if (data.limiterTempsValues.isHeureManualSelected) {
             const heures = parseInt(data.limiterTempsValues.heure) || 0;
@@ -21,14 +20,12 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         }
     }
 
-    // Initialisation du startDate lors du démarrage du chronomètre
     useEffect(() => {
         if (isRunning && timeSelected > 0 && !startDate) {
             setStartDate(Date.now() + timeSelected);
         }
     }, [isRunning, timeSelected, startDate]);
 
-    // Fonction pour démarrer le chronomètre
     const startTimer = () => {
         if (!isRunning) {
             setIsRunning(true);
@@ -36,7 +33,6 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         }
     };
 
-    // Utilisation de useEffect pour minuterie illimitée
     useEffect(() => {
         if (timeSelected <= 0 && isRunning) {
             const interval = setInterval(() => {
@@ -46,7 +42,6 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         }
     }, [timeSelected, isRunning]);
 
-    // Rendu du compte à rebours
     const renderer = ({ hours, minutes, seconds, completed }) => {
         if (completed) {
             return <span>Temps écoulé !</span>;
@@ -55,7 +50,6 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         }
     };
 
-    // Format du temps écoulé
     const formatElapsedTime = () => {
         const hours = Math.floor(elapsedTime / 3600);
         const minutes = Math.floor((elapsedTime % 3600) / 60);
@@ -67,7 +61,7 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
         <Fragment>
             <div
                 className={`${s.cardBox} cursor-pointer h-48 p-7 flex flex-col justify-center items-center gap-4 bg-[#541ec144] text-white rounded-lg shadow-lg`}
-                onClick={() => { onClick(); startTimer(); }} // Active le chronomètre au clic
+                onClick={() => { onClick(); startTimer(); }}
             >
                 {!data ? (
                     <>
@@ -97,9 +91,10 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
                                 <p className="text-2xl font-semibold">Temps écoulé : {formatElapsedTime()}</p>
                             </>
                         )}
-                        <p className="text-xl">
-                            {data.selectedMaterialType} : {data.paymentInputs?.status ? 'Payée' : 'Non Payée'}
-                        </p>
+                            <p className="text-xl">
+                                {data.selectedMaterialType} : {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
+                            </p>
+
                         <p className="text-lg font-semibold">
                             Total : {data.paymentInputs?.amount ? `${data.paymentInputs.amount} Ar` : 'N/A'}
                         </p>

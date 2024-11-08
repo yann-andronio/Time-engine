@@ -10,18 +10,17 @@ export default function Payement({ onPaymentChange }) {
     });
 
     const handleChange = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
-        setInputs(values => {
-            const updatedValues = { ...values, [name]: value };
-            onPaymentChange(updatedValues); 
-            return updatedValues;
-        });
+        const { name, value } = event.target;
+        const updatedInputs = { ...inputs, [name]: value };
+
+        // Assure que le statut de paiement est mis à jour à chaque changement
+        setInputs(updatedInputs);
+        onPaymentChange(updatedInputs);
     };
 
     useEffect(() => {
-        onPaymentChange(inputs); 
-    }, []);
+        onPaymentChange(inputs);
+    }, [inputs, onPaymentChange]);
 
     return (
         <Fragment>
@@ -49,8 +48,8 @@ export default function Payement({ onPaymentChange }) {
                             <input
                                 type="radio"
                                 name="paymentType"
-                                value=" Payée"
-                                checked={inputs.paymentType === " Payée"}
+                                value="Payée"
+                                checked={inputs.paymentType === "Payée"}
                                 onChange={handleChange}
                                 className="form-radio h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                             />
@@ -58,33 +57,20 @@ export default function Payement({ onPaymentChange }) {
                         </label>
                     </div>
 
-                    <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea
-                            name="description"
-                            value={inputs.description}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
-                            rows="5"
-                            placeholder="Entrez une description..."
-                        />
-                    </div>
+              
 
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium text-gray-700">Description</label>
+                            <textarea
+                                name="description"
+                                value={inputs.description}
+                                onChange={handleChange}
+                                className="mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"
+                                rows="5"
+                                placeholder="Entrez une description..."
+                            />
+                        </div>
                     
-
-                    {/* Champ de montant (si nécessaire) */}
-                    {/* <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700">Montant</label>
-                        <input
-                            disabled={inputs.paymentType === "non"}
-                            type="number"
-                            name="amount"
-                            value={inputs.amount}
-                            onChange={handleChange}
-                            className={`  ${inputs.paymentType === "non" ? 'bg-orange-400' : ''} mt-1 p-2 border border-gray-300 rounded-md w-full focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200`}
-                            placeholder="Entrez un montant..."
-                        />
-                    </div> */}
                 </fieldset>
             </div>
         </Fragment>
