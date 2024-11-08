@@ -6,6 +6,7 @@ import { FaHourglassHalf } from 'react-icons/fa6';
 import { FaClipboard } from 'react-icons/fa6';
 import { FaClock } from 'react-icons/fa6';
 import { FaMoneyBillAlt } from 'react-icons/fa';
+import soundFile from './sounds/notification.mp3';
 import s from "./cardstart.module.css";
 
 export default function CardStart({ numero, onClick, data, resetCard }) {
@@ -18,6 +19,8 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     const [showAddTimeModal, setShowAddTimeModal] = useState(false); // Etat pour afficher la modale d'ajout de temps
     const [timeToAdd, setTimeToAdd] = useState({ heures: 0, minutes: 0 }); // Temps à ajouter
     const [selectedCardData, setSelectedCardData] = useState(null); // Données de la carte sélectionnée
+    const [audio, setAudio] = useState(null); // État pour stocker l'instance audio
+
 
     const ratePerSecond = 1000 / 60 / 60; // 1000 AR pour 60 minutes, soit environ 0.28 AR par seconde
 
@@ -30,6 +33,7 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
         setIsPaused(false); // Réinitialise l'état de pause
         setShowConfirmModal(false); // Ferme la modale
         setShowAddTimeModal(false); // Ferme la modale d'ajout de temps
+        stopSoundNotification(); 
     };
 
     let timeSelected = 0;
@@ -100,10 +104,22 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     };
 
     const handleAddTime = () => {
+        // Calcul du temps à ajouter en millisecondes
         const additionalTime = (timeToAdd.heures * 60 + timeToAdd.minutes) * 60 * 1000;
-        setRemainingTime((prev) => prev + additionalTime); // Ajouter le temps saisi au temps restant
-        setShowAddTimeModal(false); // Fermer la modale
+
+        // Ajouter le temps au temps restant
+        setRemainingTime((prev) => prev + additionalTime);
+
+        // Calculer le montant à ajouter en fonction du temps ajouté
+        const additionalAmount = (timeToAdd.heures * 60 + timeToAdd.minutes) * ratePerSecond * 60; // Le montant est calculé pour chaque minute ajoutée
+
+        // Ajouter le montant au total
+        setTotalAmount((prev) => Math.round(prev + additionalAmount)); // Arrondi le montant pour qu'il soit plus précis
+
+        // Fermer la modale après l'ajout du temps
+        setShowAddTimeModal(false);
     };
+
 
     const handleTimeChange = (e) => {
         const { name, value } = e.target;
@@ -116,6 +132,34 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
         const seconds = Math.floor((time % 60000) / 1000); // Secondes
         return `${hours} h ${minutes} min ${seconds} sec`;
     };
+  
+
+
+    // Fonction pour jouer le son lorsque le timer est terminé
+    // Fonction pour jouer le son
+    const playSoundNotification = () => {
+        const newAudio = new Audio(soundFile); // Crée un nouvel objet Audio
+        newAudio.play(); // Joue le son
+        setAudio(newAudio); // Stocke l'instance pour pouvoir la contrôler plus tard
+    };
+
+    // Fonction pour arrêter le son
+    const stopSoundNotification = () => {
+        if (audio) {
+            audio.pause(); // Arrête la lecture du son
+            audio.currentTime = 0; // Remet le son au début
+        }
+    };
+
+    // Détecter si le temps est écoulé et jouer le son
+    useEffect(() => {
+        if (remainingTime === 0) {
+            playSoundNotification(); // Jouer le son si le timer est terminé
+            
+        }
+    }, [remainingTime]);
+
+    
 
     return (
         <Fragment>
@@ -195,7 +239,7 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
                             </span>
                         </p>
 
-                        <div className="flex gap-3 mt-4">
+                        <div className="flex gap-3 mt-4 z-0">
                             <button
                                 onClick={togglePause}
                                 className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 rounded-md text-white font-medium hover:bg-blue-600 transition-all duration-200 ease-in-out shadow-md transform active:scale-95"
@@ -234,7 +278,7 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
             {/* Modal de confirmation */}
 
             {showConfirmModal && selectedCardData && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded shadow-lg text-center">
                         <h3 className="text-xl font-semibold mb-4">Êtes-vous sûr de vouloir arrêter le timer numero <span className='text-xl font-semibold'>#{numero}</span> ?</h3>
                         <div className="text-left mb-4">
