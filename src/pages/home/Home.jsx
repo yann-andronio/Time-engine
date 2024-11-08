@@ -23,21 +23,30 @@ export default function Home() {
     };
 
     const handleConfirm = (data) => {
-        // Associe les données confirmées à la carte correspondante
+        console.log("Données confirmées reçues depuis Modulestart:", data);
+
+        // Ajout du montant à paymentInputs à partir de limiterTempsValues
+        const amount = data?.limiterTempsValues?.money || 'N/A';  // Si money existe, on le prend, sinon on met 'N/A'
+
         setDatarecupered(prevData => ({
             ...prevData,
             [selectedCard]: {
                 ...data,
                 limiterTempsValues: {
                     ...data.limiterTempsValues,
-                    isHeureManualSelected: true, // Assurez-vous que c'est défini sur vrai si l'heure est manuellement sélectionnée
-                    heure: data.limiterTempsValues?.heure || 0, // Récupération des heures
-                    min: data.limiterTempsValues?.min || 0, // Récupération des minutes
+                    isHeureManualSelected: true,
+                    heure: data.limiterTempsValues?.heure || 0,
+                    min: data.limiterTempsValues?.min || 0,
+                },
+                paymentInputs: {
+                    ...data.paymentInputs,
+                    amount: amount  // On met money dans paymentInputs.amount
                 }
             }
         }));
         setShowModuleStart(false);
     };
+
 
     return (
         <Fragment>

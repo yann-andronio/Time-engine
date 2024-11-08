@@ -91,13 +91,16 @@ export default function CardStart({ numero, onClick, data, onOrderConfirm }) {
                                 <p className="text-2xl font-semibold">Temps écoulé : {formatElapsedTime()}</p>
                             </>
                         )}
-                            <p className="text-xl">
-                                {data.selectedMaterialType} : {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
+                        <p className="text-xl">
+                            {data.selectedMaterialType} : {data.paymentInputs?.paymentType === 'Payée' ? 'Payée' : 'Non Payée'}
+                        </p>
+
+                            <p className="text-lg font-semibold">
+                                Total : {data.paymentInputs?.amount ? `${data.paymentInputs.amount} Ar` : 'N/A'}
                             </p>
 
-                        <p className="text-lg font-semibold">
-                            Total : {data.paymentInputs?.amount ? `${data.paymentInputs.amount} Ar` : 'N/A'}
-                        </p>
+
+
                         <button
                             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700"
                             onClick={onOrderConfirm}
