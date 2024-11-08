@@ -11,6 +11,9 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Etat pour la modal de confirmation
     const [selectedCardData, setSelectedCardData] = useState(null); // Etat pour stocker les données du card sélectionné
 
+    const ratePerSecond = 1000 / 60 / 60; // 1000 AR pour 60 minutes, soit environ 0.28 AR par seconde
+
+    // La fonction resetCard ne sera pas modifiée
     const resetCardHandler = () => {
         resetCard(numero); // Appelle la fonction resetCard du parent pour réinitialiser la carte
         setTotalAmount(0); // Réinitialise totalAmount
@@ -36,20 +39,12 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
     useEffect(() => {
         if (timeSelected > 0) {
             const minutesSelected = timeSelected / (60 * 1000);
-            setTotalAmount(Math.round(minutesSelected * (1000 / 60)));
+            setTotalAmount(Math.round(minutesSelected * (1000 / 60))); // Arrondi à l'entier le plus proche
             setRemainingTime(timeSelected); // Initialiser le temps restant
         } else {
             setElapsedTime(0); // Initialiser le temps écoulé à zéro si illimité
         }
     }, [timeSelected]);
-
-    const startTimer = () => {
-        if (!isRunning) {
-            setIsRunning(true);
-            setElapsedTime(0);
-            setRemainingTime(timeSelected); // Réinitialiser le timer
-        }
-    };
 
     useEffect(() => {
         if (isRunning && !isPaused) {
@@ -64,12 +59,24 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
                     });
                 } else if (timeSelected === 0) {
                     setElapsedTime((prev) => prev + 1000); // Temps illimité, incrémenter le temps écoulé
+                    // Incrémenter par minute
+                    if (elapsedTime % (60 * 1000) === 0) { // Vérifier chaque minute
+                        setTotalAmount((prev) => Math.round(prev + ratePerSecond * 60)); // Ajouter le montant chaque minute et arrondir
+                    }
                 }
             }, 1000);
 
             return () => clearInterval(interval); // Nettoyage lorsque le composant est démonté ou réinitialisé
         }
     }, [isRunning, isPaused, remainingTime, elapsedTime, timeSelected]);
+
+    const startTimer = () => {
+        if (!isRunning) {
+            setIsRunning(true);
+            setElapsedTime(0);
+            setRemainingTime(timeSelected); // Réinitialiser le timer
+        }
+    };
 
     const togglePause = () => {
         setIsPaused(!isPaused); // Basculer entre pause et reprise
@@ -146,10 +153,11 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
                 )}
             </div>
 
+            {/* Modal de confirmation, sans modification */}
             {showConfirmModal && selectedCardData && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-6 rounded shadow-lg text-center">
-                        <h3 className="text-xl font-semibold mb-4">Êtes-vous sûr de vouloir arrêter le timer ?</h3>
+                        <h3 className="text-xl font-semibold mb-4">Êtes-vous sûr de vouloir arrêter le timer numero <span className='text-xl font-semibold'>#{numero}</span> ?</h3>
                         <div className="text-left mb-4">
                             <p><strong>Temps : </strong>{selectedCardData.limiterTempsValues.isHeureManualSelected
                                 ? `${selectedCardData.limiterTempsValues.heure}h ${selectedCardData.limiterTempsValues.min}min`
@@ -160,7 +168,7 @@ export default function CardStart({ numero, onClick, data, resetCard }) {
                         </div>
                         <div className="flex justify-center gap-4">
                             <button onClick={resetCardHandler} className="p-2 bg-red-500 text-white rounded">Oui, arrêter</button>
-                            <button onClick={cancelStop} className="p-2 bg-gray-500 text-white rounded">Annuler</button>
+                            <button onClick={cancelStop} className="p-2 bg-gray-300 text-black rounded">Annuler</button>
                         </div>
                     </div>
                 </div>
